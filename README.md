@@ -1,16 +1,36 @@
-# PAPURDIGANS - Florería Aleslí
+# WOLF TANK CHALLENGE - PAPURDIGANS
 
-Prototipo web con React, Node.js/Express, MySQL y Docker para la gestión comercial y administrativa de la Florería Aleslí.
+## Informacion del equipo
 
-## Módulos incluidos
+- **Nombre del grupo:** PAPURDIGANS
+- **Rubro:** Prototipo de sistema web con agentes inteligentes para la optimizacion de la gestion comercial y administrativa enfocada en el sector floral.
+- **Caso:** Floreria Alesli.
 
-- Login con token y opción "Recordarme".
-- Catálogo digital de arreglos florales con creación, edición y activación/desactivación de productos.
-- Registro y seguimiento de pedidos.
-- Pedidos con creacion, detalle, edicion, cambio de estado y cancelacion.
+## Integrantes
+
+- **Alex Joel Quispe Ticona:** Scrum Master / Dev - Base de datos, plataforma de pedidos. Rama: `feature/Alex`.
+- **Cristopher Iori Lazcano Gutierrez:** Developer - Login, clientes frecuentes, reportes financieros. Rama: `feature/Cristopher`.
+- **Said Eduardo Lazarte Vasquez:** Developer - Calendario fechas clave, campanas digitales. Rama: `feature/Said`.
+- **Alejandro Villalpando Rojas:** Developer - Automatizacion WhatsApp, catalogo digital. Rama: `feature/Alejandro`.
+
+## Stack tecnologico
+
+- **Lenguajes:** JavaScript, SQL.
+- **Frontend:** React.js con Vite.
+- **Backend:** Node.js con Express.
+- **Base de datos:** MySQL.
+- **Infraestructura:** Docker Compose.
+- **Herramientas:** Git, GitHub/GitLab, Trello, API de Inteligencia Artificial y WhatsApp Business API en modo demostrativo.
+
+## Modulos incluidos
+
+- Login con token y opcion "Recordarme".
+- Login redisenado con estetica floral y boton para mostrar/ocultar contrasena.
+- Catalogo digital de arreglos florales con creacion, edicion y activacion/desactivacion de productos.
+- Pedidos con creacion, detalle, edicion, cambio de estado, cancelacion y recalculo de total.
 - Clientes frecuentes con creacion, edicion, desactivacion, historial y preferencias.
-- Calendario de fechas clave y campañas.
-- Reportes financieros básicos con gráficos.
+- Calendario de fechas clave y campanas vinculadas.
+- Reportes financieros basicos con graficos.
 - Agente inteligente demostrativo para consultas, confirmaciones y recordatorios estilo WhatsApp.
 
 ## Levantar con Docker
@@ -33,7 +53,7 @@ Adminer:
 - Sistema: `MySQL`
 - Servidor: `mysql`
 - Usuario: `alesli`
-- Contraseña: `alesli123`
+- Contrasena: `alesli123`
 - Base de datos: `alesli_db`
 
 Herramientas locales como MySQL Workbench:
@@ -41,22 +61,22 @@ Herramientas locales como MySQL Workbench:
 - Host: `localhost`
 - Puerto: `3307`
 - Usuario: `alesli`
-- Contraseña: `alesli123`
+- Contrasena: `alesli123`
 - Base de datos: `alesli_db`
 
 ## Credenciales demo
 
 - Usuario: `admin@alesli.bo`
-- Contraseña: `alesli2026`
+- Contrasena: `alesli2026`
 
 ## Estructura
 
-- `frontend/`: aplicación React.
+- `frontend/`: aplicacion React.
 - `backend/`: API Express.
 - `db/init.sql`: esquema relacional y datos semilla.
-- `db/ERD.md`: diagrama entidad-relación en Mermaid.
-- `db/README.md`: guía de conexión y reinicio de datos.
+- `db/ERD.md`: diagrama entidad-relacion en Mermaid.
+- `db/README.md`: guia de conexion y reinicio de datos.
 
 ## Alcance prototipo
 
-WhatsApp Business y OpenAI/Claude quedan simulados mediante endpoints locales de demostración, respetando los límites definidos para la etapa de prototipo.
+WhatsApp Business y OpenAI/Claude quedan simulados mediante endpoints locales de demostracion, respetando los limites definidos para la etapa de prototipo.
