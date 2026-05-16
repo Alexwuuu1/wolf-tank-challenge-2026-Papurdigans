@@ -1,4 +1,5 @@
 services:
+  # Base de datos MySQL del prototipo inicial Alesli.
   mysql:
     image: mysql:8.0
     container_name: alesli_mysql
@@ -20,6 +21,7 @@ services:
       timeout: 5s
       retries: 10
 
+  # API REST Express: autenticacion, pedidos, clientes, catalogo, reportes y agente demo.
   backend:
     build: ./backend
     container_name: alesli_backend
@@ -39,6 +41,7 @@ services:
       mysql:
         condition: service_healthy
 
+  # Herramienta web para revisar la base de datos durante la demo.
   adminer:
     image: adminer:4
     container_name: alesli_adminer
@@ -49,6 +52,7 @@ services:
       mysql:
         condition: service_healthy
 
+  # Aplicacion React: web cliente y panel administrativo.
   frontend:
     build: ./frontend
     container_name: alesli_frontend
