@@ -4,6 +4,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { Agent } from './components/modules/Agent';
 import { CalendarCampaigns } from './components/modules/CalendarCampaigns';
 import { Catalog } from './components/modules/Catalog';
+import { ClientPortal } from './components/modules/ClientPortal';
 import { Customers } from './components/modules/Customers';
 import { Dashboard } from './components/modules/Dashboard';
 import { Login } from './components/modules/Login';
@@ -68,6 +69,17 @@ export function App() {
   }
 
   if (!session) return <Login onLogin={onLogin} apiUrl={API_URL} />;
+
+  if (session.user.role === 'cliente') {
+    return (
+      <ClientPortal
+        api={api}
+        products={state.products}
+        user={session.user}
+        onLogout={logout}
+      />
+    );
+  }
 
   const tabs = [
     ['panel', 'Panel', BarChart3],

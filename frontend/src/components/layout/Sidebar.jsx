@@ -1,10 +1,11 @@
-import { Flower2, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import logoAlesli from '../../assets/logoalesli.jpg';
 
 export function Sidebar({ tabs, active, onChange, onLogout }) {
   return (
     <aside className="sidebar">
       <div className="brandMark">
-        <Flower2 size={30} />
+        <img className="brandLogo" src={logoAlesli} alt="Logo Floreria Alesli" />
         <div>
           <strong>Alesli</strong>
           <span>Naturalmente para ti</span>

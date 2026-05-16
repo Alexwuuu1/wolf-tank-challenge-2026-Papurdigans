@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Ban, Edit3, Eye, PackagePlus, Save, Trash2, X } from 'lucide-react';
+import { Ban, CalendarDays, Edit3, Eye, MapPin, PackagePlus, Phone, Save, Trash2, UserRound, X } from 'lucide-react';
 import { orderStatuses } from '../../constants/orderStatuses';
+import { buildMapEmbedUrl, buildMapLink } from '../../utils/maps';
 
 const emptyOrder = {
   id: null,
@@ -38,6 +39,8 @@ export function Orders({ api, orders, products, reload }) {
   const [draft, setDraft] = useState(emptyOrder);
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState('');
+  const [detailError, setDetailError] = useState('');
+  const [detailLoading, setDetailLoading] = useState(null);
   const [saving, setSaving] = useState(false);
 
   function addProduct(product) {
@@ -56,9 +59,17 @@ export function Orders({ api, orders, products, reload }) {
   }
 
   async function loadDetail(orderId, mode = 'view') {
-    const detail = await api.request(`/orders/${orderId}`);
-    setSelected(detail);
-    if (mode === 'edit') setDraft(normalizeDetail(detail));
+    setDetailLoading(orderId);
+    setDetailError('');
+    try {
+      const detail = await api.request(`/orders/${orderId}`);
+      setSelected(detail);
+      if (mode === 'edit') setDraft(normalizeDetail(detail));
+    } catch (err) {
+      setDetailError(err.message || 'No se pudo cargar el detalle del pedido');
+    } finally {
+      setDetailLoading(null);
+    }
   }
 
   async function saveOrder(event) {
@@ -104,7 +115,7 @@ export function Orders({ api, orders, products, reload }) {
         </div>
         <div className="tableList">
           {orders.map(order => (
-            <article className="orderRow orderRowActions" key={order.id}>
+            <article className={`orderRow orderRowActions ${selected?.id === order.id ? 'selectedOrder' : ''}`} key={order.id}>
               <div>
                 <strong>#{order.id} {order.customer}</strong>
                 <span>{order.deliveryDate?.slice(0, 10)} - {order.deliveryAddress}</span>
@@ -114,7 +125,7 @@ export function Orders({ api, orders, products, reload }) {
               </select>
               <b>Bs {Number(order.total).toFixed(0)}</b>
               <div className="rowActions">
-                <button type="button" title="Ver detalle" onClick={() => loadDetail(order.id)}>
+                <button type="button" title="Ver detalle" disabled={detailLoading === order.id} onClick={() => loadDetail(order.id)}>
                   <Eye size={17} />
                 </button>
                 <button type="button" title="Editar pedido" onClick={() => loadDetail(order.id, 'edit')}>
@@ -127,28 +138,8 @@ export function Orders({ api, orders, products, reload }) {
             </article>
           ))}
         </div>
+        {detailError && <p className="error">{detailError}</p>}
 
-        {selected && (
-          <aside className="detailPanel">
-            <div className="moduleHeader">
-              <div>
-                <h2>Detalle #{selected.id}</h2>
-                <p>{selected.customer} - {selected.status}</p>
-              </div>
-              <button type="button" className="secondaryButton" onClick={() => setSelected(null)}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="detailList">
-              {selected.items.map(item => (
-                <div key={item.id}>
-                  <span>{item.name} x{item.quantity}</span>
-                  <strong>Bs {Number(item.subtotal).toFixed(0)}</strong>
-                </div>
-              ))}
-            </div>
-          </aside>
-        )}
       </div>
 
       <form className="module orderForm" onSubmit={saveOrder}>
@@ -204,6 +195,87 @@ export function Orders({ api, orders, products, reload }) {
           )}
         </div>
       </form>
+      {selected && (
+        <div className="orderDetailModal" role="dialog" aria-modal="true" aria-label={`Detalle pedido ${selected.id}`}>
+          <aside className="orderDetailPanel">
+            <header className="orderDetailHeader">
+              <div>
+                <span className="tag">Pedido #{selected.id}</span>
+                <h2>{selected.customer}</h2>
+                <p>{selected.notes || 'Sin notas adicionales.'}</p>
+              </div>
+              <div className="detailHeaderActions">
+                <strong>Bs {Number(selected.total).toFixed(0)}</strong>
+                <button type="button" className="secondaryButton" onClick={() => setSelected(null)}>
+                  <X size={18} />
+                  Cerrar
+                </button>
+              </div>
+            </header>
+
+            <div className="orderDetailMeta">
+              <article>
+                <UserRound size={18} />
+                <div>
+                  <span>Cliente</span>
+                  <strong>{selected.customer}</strong>
+                </div>
+              </article>
+              <article>
+                <Phone size={18} />
+                <div>
+                  <span>WhatsApp</span>
+                  <strong>{selected.phone}</strong>
+                </div>
+              </article>
+              <article>
+                <CalendarDays size={18} />
+                <div>
+                  <span>Entrega</span>
+                  <strong>{selected.deliveryDate?.slice(0, 10)}</strong>
+                </div>
+              </article>
+              <article>
+                <PackagePlus size={18} />
+                <div>
+                  <span>Estado</span>
+                  <strong>{selected.status}</strong>
+                </div>
+              </article>
+            </div>
+
+            <section className="orderDetailGrid">
+              <div className="detailProductsCard">
+                <div className="detailSectionTitle">
+                  <h3>Productos del pedido</h3>
+                  <span>{selected.items.length} item{selected.items.length === 1 ? '' : 's'}</span>
+                </div>
+                <div className="detailList">
+                  {selected.items.map(item => (
+                    <div key={item.id}>
+                      <span>{item.name} x{item.quantity}</span>
+                      <strong>Bs {Number(item.subtotal).toFixed(0)}</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="adminMapPreview">
+                <div>
+                  <MapPin size={18} />
+                  <div>
+                    <strong>Ubicacion de entrega</strong>
+                    <span>{selected.deliveryAddress}</span>
+                  </div>
+                </div>
+                <iframe title={`Mapa pedido ${selected.id}`} src={buildMapEmbedUrl(selected.deliveryAddress)} loading="lazy" />
+                <a href={buildMapLink(selected.deliveryAddress)} target="_blank" rel="noreferrer">
+                  Abrir en Google Maps
+                </a>
+              </div>
+            </section>
+          </aside>
+        </div>
+      )}
     </section>
   );
 }

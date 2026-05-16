@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Edit3, Power, Save, UserPlus, X } from 'lucide-react';
+import { Edit3, Mail, Phone, Power, Save, Search, ShoppingBag, UserPlus, UsersRound, X } from 'lucide-react';
 
 const emptyCustomer = {
   id: null,
@@ -11,8 +11,12 @@ const emptyCustomer = {
 
 export function Customers({ api, customers, reload }) {
   const [draft, setDraft] = useState(emptyCustomer);
+  const [search, setSearch] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const filtered = customers.filter(customer => `${customer.name} ${customer.phone} ${customer.email || ''} ${customer.preferences || ''}`.toLowerCase().includes(search.toLowerCase()));
+  const totalOrders = customers.reduce((sum, customer) => sum + Number(customer.totalOrders || 0), 0);
+  const frequentCustomers = customers.filter(customer => Number(customer.totalOrders || 0) >= 2).length;
 
   function editCustomer(customer) {
     setDraft({
@@ -59,12 +63,24 @@ export function Customers({ api, customers, reload }) {
             <h2>Clientes frecuentes</h2>
             <p>Historial, recurrencia y preferencias de compra.</p>
           </div>
+          <label className="searchBox">
+            <Search size={18} />
+            <input placeholder="Buscar cliente, WhatsApp o preferencia" value={search} onChange={event => setSearch(event.target.value)} />
+          </label>
+        </div>
+        <div className="customerStats">
+          <article><UsersRound size={20} /><strong>{customers.length}</strong><span>clientes activos</span></article>
+          <article><ShoppingBag size={20} /><strong>{totalOrders}</strong><span>pedidos acumulados</span></article>
+          <article><UserPlus size={20} /><strong>{frequentCustomers}</strong><span>clientes recurrentes</span></article>
         </div>
         <div className="customerGrid">
-          {customers.map(customer => (
+          {filtered.map(customer => (
             <article className="customerCard liftCard" key={customer.id}>
+              <div className="customerAvatar">{customer.name.slice(0, 1).toUpperCase()}</div>
               <strong>{customer.name}</strong>
-              <span>{customer.phone} - {customer.totalOrders} pedidos</span>
+              <span><Phone size={14} /> {customer.phone}</span>
+              {customer.email && <span><Mail size={14} /> {customer.email}</span>}
+              <span><ShoppingBag size={14} /> {customer.totalOrders} pedidos registrados</span>
               <p>{customer.preferences || 'Sin preferencias registradas.'}</p>
               <div className="cardActions">
                 <button type="button" title="Editar cliente" onClick={() => editCustomer(customer)}>
@@ -79,16 +95,24 @@ export function Customers({ api, customers, reload }) {
         </div>
       </div>
 
-      <form className="module productForm" onSubmit={saveCustomer}>
+      <form className="module productForm customerForm" onSubmit={saveCustomer}>
         <div className="moduleHeader">
           <div>
             <h2>{draft.id ? 'Editar cliente' : 'Nuevo cliente'}</h2>
             <p>Registra preferencias para fidelizacion.</p>
           </div>
         </div>
-        <input required placeholder="Nombre completo" value={draft.name} onChange={event => setDraft({ ...draft, name: event.target.value })} />
-        <input required placeholder="WhatsApp" value={draft.phone} onChange={event => setDraft({ ...draft, phone: event.target.value })} />
-        <input type="email" placeholder="Correo" value={draft.email} onChange={event => setDraft({ ...draft, email: event.target.value })} />
+        <div className="customerFormIntro">
+          <UserPlus size={22} />
+          <div>
+            <strong>{draft.id ? 'Actualizando perfil' : 'Alta manual desde administracion'}</strong>
+            <span>Los clientes tambien pueden crear cuenta desde el login publico.</span>
+          </div>
+        </div>
+        <label>Nombre completo<input required placeholder="Ej: Laura Perez" value={draft.name} onChange={event => setDraft({ ...draft, name: event.target.value })} /></label>
+        <label>WhatsApp<input required placeholder="Ej: 70123456" value={draft.phone} onChange={event => setDraft({ ...draft, phone: event.target.value })} /></label>
+        <label>Correo<input type="email" placeholder="cliente@email.com" value={draft.email} onChange={event => setDraft({ ...draft, email: event.target.value })} /></label>
+        <label>Preferencias</label>
         <textarea placeholder="Preferencias del cliente" value={draft.preferences} onChange={event => setDraft({ ...draft, preferences: event.target.value })} />
         {error && <p className="error">{error}</p>}
         <div className="formActions">

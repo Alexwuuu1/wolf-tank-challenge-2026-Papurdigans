@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   name VARCHAR(120) NOT NULL,
   email VARCHAR(160) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  role ENUM('admin','vendedor','operador') NOT NULL DEFAULT 'admin',
+  role ENUM('admin','vendedor','operador','cliente') NOT NULL DEFAULT 'admin',
   active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -207,7 +207,8 @@ GROUP BY cat.id, cat.name;
 INSERT IGNORE INTO users (id, name, email, password_hash, role) VALUES
 (1, 'Equipo PAPURDIGANS', 'admin@alesli.bo', '08d6675b9728a37527a12b2724dc081496be6dac071f855865615b7e0fc273b1', 'admin'),
 (2, 'Alejandro Villalpando', 'alejandro@alesli.bo', '08d6675b9728a37527a12b2724dc081496be6dac071f855865615b7e0fc273b1', 'operador'),
-(3, 'Cristopher Lazcano', 'cristopher@alesli.bo', '08d6675b9728a37527a12b2724dc081496be6dac071f855865615b7e0fc273b1', 'vendedor');
+(3, 'Cristopher Lazcano', 'cristopher@alesli.bo', '08d6675b9728a37527a12b2724dc081496be6dac071f855865615b7e0fc273b1', 'vendedor'),
+(4, 'Cliente Demo Alesli', 'cliente@alesli.bo', '08d6675b9728a37527a12b2724dc081496be6dac071f855865615b7e0fc273b1', 'cliente');
 
 INSERT IGNORE INTO categories (id, name, description) VALUES
 (1, 'Ramos', 'Ramos florales personalizados.'),
